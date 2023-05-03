@@ -7,7 +7,7 @@ In addition to meteorological input and catchment attributes, we use hydrologica
 This framework is an update of the method by [Shen et al. (2022)](https://doi.org/10.1016/j.cageo.2021.105019) to the global scale. 
 
 ## Input data
-Input data and outputs of the 30 arcmin run are available on Zenodo ([input](https://zenodo.org/record/7890583), [output](https://doi.org/10.5281/zenodo.7891352)). \
+Input data and outputs of the 30 arcmin run are available on Zenodo ([input](https://zenodo.org/record/7890583), [output](https://doi.org/10.5281/zenodo.7891352), [validation hydrographs](10.5281/zenodo.7893903)). \
 River discharge data was downloaded from the Global Runoff Data Centre ([GRDC](https://www.bafg.de/GRDC)). \
 2286 stations with variable availability of observations were selected (min. area = 10 000 km<sup>2</sup>) \
 The selected stations can be found stationLatLon.csv (merged daily and monthly).
