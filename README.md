@@ -16,7 +16,7 @@ The selected stations can be found stationLatLon.csv (merged daily and monthly).
 For fast installation / update of necessary modules it is recommended to use the mamba package manager.\
 Current dependencies: numpy, pandas, alive_progress, netCDF4, xarray, multiprocessing.
 
-The python module is used to extract raw data into homogeneous .csv files. \
+The python module is used to extract raw data into homogeneous .csv files.
 - Extraction of GRDC discharge, either daily or monthly (from .txt)
 - Extraction of PCR-GLOBWB upstream averaged parameters (from data/allpoints_catchAttr.csv into stationLatLon.csv)
 - Extraction of PCR-GLOBWB upstream averaged meteo input and state variables (from .netCDF). 
