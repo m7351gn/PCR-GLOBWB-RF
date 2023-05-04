@@ -7,6 +7,10 @@ source('fun_3_4_hydrograph_fdc_residuals_selected.R')
 ## plot observed, uncalibrated, corrected hydrograph
 #~ subsample <- '1' # choose subsample number here
 
+legend.text.size <- 24
+axis.title.size <- 24
+axis.text.size <- 18
+
 combiPlot <- function(station_no){  
   
   print(station_no)
@@ -26,17 +30,17 @@ combiPlot <- function(station_no){
       title = paste0(station_no,' : ', station, ' (',
                       river, ', ', country, ')'),
       subtitle = paste0('lat: ', latitude, ', lon: ', longitude,
-                        '\nUpstream area: ', upstreamArea, ' km2'),
-      caption = paste0('KGE: ', KGE_uncalib, ' (uncalibrated), ', KGE_corrected, ' (post-processed)'))&#\n',
-                       #'Missing data (1979-2019): ', miss_data, '%')) &
-    theme(plot.title = element_text(hjust= 0.5, size = 22, face='bold'),
-          plot.subtitle = element_text(hjust= 0.5, size = 18),
-          plot.caption = element_text(size = 16),
+                        ', upstream area: ', upstreamArea, ' km2',
+                        '\nKGE: ', KGE_uncalib, ' (uncalibrated), ', KGE_corrected, 
+                        ' (post-processed, allPredictors)')) &
+    theme(plot.title = element_text(hjust= 0.5, size = 24, face='bold'),
+          plot.subtitle = element_text(hjust= 0.5, size = 22),
+          #plot.caption = element_text(size = 16),
           text = element_text('mono'),
           legend.position = 'none')
   # combined
   
-  ggsave(paste0(outputDirCombo,'comboPlot_',station_no,'.png'), combined, height=8, width=14, units='in', dpi=600)
+  ggsave(paste0(outputDirCombo,'comboPlot_',station_no,'.png'), combined, height=8, width=18, units='in', dpi=600)
   
 }
 
