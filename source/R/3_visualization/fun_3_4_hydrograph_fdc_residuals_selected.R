@@ -25,11 +25,11 @@ plot_hydrograph <- function(station_no, convRatio){
                           labels = c("Observed discharge   ", "Uncalibrated PCR-GLOBWB   ","Post-processed (allpredictors)")) +
     theme_minimal() +
     theme(legend.title=element_blank(),
-          legend.text = element_text(size=16),
-          axis.title.x = element_text(face="bold", size=18),
-          axis.title.y = element_text(size=18),
-          axis.text.x = element_text(size=14),
-          axis.text.y = element_text(size=14))+
+          legend.text = element_text(size=legend.text.size),
+          axis.title.x = element_text(face="bold", size=axis.title.size),
+          axis.title.y = element_text(size=axis.title.size),
+          axis.text.x = element_text(size=axis.text.size),
+          axis.text.y = element_text(size=axis.text.size))+
     guides(colour = guide_legend(override.aes = list(linewidth=3)))
   
 }
@@ -53,10 +53,10 @@ plot_ecdf <- function(station_no, convRatio){
     ylab('p\n') +
     scale_color_manual(values=c("#56B4E9","#000000","#E69F00")) +
     theme_minimal() +
-    theme(axis.title.x = element_text(face="bold", size=18),
-          axis.title.y = element_text(size=18),
-          axis.text.x = element_text(size=12),
-          axis.text.y = element_text(size=12))
+    theme(axis.title.x = element_text(face="bold", size=axis.title.size),
+          axis.title.y = element_text(size=axis.title.size),
+          axis.text.x = element_text(size=axis.text.size),
+          axis.text.y = element_text(size=axis.text.size))
 
 }
 
@@ -79,9 +79,9 @@ plot_residuals <- function(station_no, convRatio){
     ylab('residual (m/d)\n') +
     scale_color_manual(values=c("#000000","#E69F00")) +
     theme_minimal() +
-    theme(axis.title.x = element_text(face="bold", size=18),
-          axis.title.y = element_text(size=18),
-          axis.text.x = element_text(size=12),
-          axis.text.y = element_text(size=12))
+    theme(axis.title.x = element_text(face="bold", size=axis.title.size),
+          axis.title.y = element_text(size=axis.title.size),
+          axis.text.x = element_text(size=axis.text.size),
+          axis.text.y = element_text(size=axis.text.size))
   
 }
