@@ -6,7 +6,7 @@ ipak <- function(pkg){
 
 packages <- c("tidyverse", "gridExtra", "naniar", "lubridate", "sjmisc", #data 
               "RColorBrewer", "ggmap", "maps", "rcartocolor", "ggthemes",
-              "ggrepel", "ggpmisc", "patchwork", "corrplot", 'ggh4x', # viz 
+              "ggrepel", "ggpmisc", "patchwork", "ggcorrplot", 'ggh4x', # viz 
               "ranger", "hydroGOF",# random forest and KGE
               "doParallel", "foreach", "parallel", #parallel
               "vroom", "pacman"# misc
