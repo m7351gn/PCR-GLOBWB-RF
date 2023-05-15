@@ -18,13 +18,20 @@ stationInfo <- read.csv('../../../data/stationLatLon_catchAttr.csv') %>%
   select(grdc_no, lon, lat, area, aridityIdx) %>% inner_join(., stationInfoMissing)
 
 #### data preparation ####
+#change benchmark from uncalibrated to meteoCatchAttr
 subsample_KGE_list <- list ()
 for(subsample in 1:5){
   
-  rf.eval.uncalibrated <- read.csv(paste0('../../../RF/3_validate/subsample_', subsample,
-                                          '/KGE_allpredictors.csv')) %>%
+  # rf.eval.uncalibrated <- read.csv(paste0('../../../RF/3_validate/subsample_', subsample,
+  #                                         '/KGE_allpredictors.csv')) %>%
+  #   select(.,grdc_no, KGE) %>%
+  #   mutate(.,setup=factor('uncalibrated')) %>% 
+  #   mutate(.,subsample=factor(subsample)) 
+  
+  rf.eval.meteoCatchAttr <- read.csv(paste0('../../../RF/3_validate/subsample_', subsample,
+                                          '/KGE_meteoCatchAttr.csv')) %>%
     select(.,grdc_no, KGE) %>%
-    mutate(.,setup=factor('uncalibrated')) %>% 
+    mutate(.,setup=factor('meteoCatchAttr')) %>% 
     mutate(.,subsample=factor(subsample)) 
   
   #read allpredictors
@@ -36,7 +43,7 @@ for(subsample in 1:5){
     mutate(.,subsample=factor(subsample)) 
   
   #put together in one list
-  subsample_KGE <- rbind(rf.eval.uncalibrated, rf.eval.allpredictors)
+  subsample_KGE <- rbind(rf.eval.meteoCatchAttr, rf.eval.allpredictors)
   
   subsample_KGE_list[[subsample]] <- subsample_KGE
   
@@ -44,12 +51,17 @@ for(subsample in 1:5){
 
 plotData <- do.call(rbind, subsample_KGE_list)
 
-plotData_uncalibrated <- plotData %>% filter(.,setup=='uncalibrated') %>% 
-  group_by(grdc_no) %>% 
-  summarise(mean_test_KGE_uncalibrated = mean(KGE)) %>% na.omit(.) %>% 
-  inner_join(., stationInfo) %>%
-  mutate(.,setup=factor('uncalibrated'))
+# plotData_uncalibrated <- plotData %>% filter(.,setup=='uncalibrated') %>% 
+#   group_by(grdc_no) %>% 
+#   summarise(mean_test_KGE_uncalibrated = mean(KGE)) %>% na.omit(.) %>% 
+#   inner_join(., stationInfo) %>%
+#   mutate(.,setup=factor('uncalibrated'))
 
+plotData_meteoCatchAttr <- plotData %>% filter(.,setup=='meteoCatchAttr') %>% 
+  group_by(grdc_no) %>% 
+  summarise(mean_test_KGE_meteoCatchAttr = mean(KGE)) %>% na.omit(.) %>% 
+  inner_join(., stationInfo) %>%
+  mutate(.,setup=factor('meteoCatchAttr'))
 
 plotData_allpredictors <- plotData %>% filter(.,setup=='allpredictors') %>% 
   group_by(grdc_no) %>% 
@@ -67,7 +79,29 @@ breaks=c(-Inf, -0.41, 0, 0.2, 0.4, 0.6, 0.8, 0.9, 1)
 labels=c('KGE < -0.41','-0.41 < KGE < 0', '0 < KGE < 0.2','0.2 < KGE < 0.4',
          '0.4 < KGE < 0.6','0.6 < KGE < 0.8','0.8 < KGE < 0.9','0.9 < KGE < 1')
 
-KGE_map_uncalibrated <- ggplot() +
+# KGE_map_uncalibrated <- ggplot() +
+#   geom_map(
+#     data = wg, map = wg,
+#     aes(long, lat, map_id = region),
+#     color = "white", fill= "grey"
+#   ) +
+#   theme_map()+
+#   xlim(-180,180)+
+#   ylim(-55,75)+
+#   geom_point(plotData_uncalibrated, mapping = aes(x = lon, y = lat,
+#                                       fill=cut(mean_test_KGE_uncalibrated, breaks=breaks, labels=labels)),
+#              color='black', pch=21, size = 2.5) +
+#   scale_fill_brewer(palette='RdYlBu', guide = guide_legend(reverse=TRUE), name='')+
+#   labs(title='Uncalibrated PCR-GLOBWB\n') +
+#   xlab('longitude')+
+#   ylab('latitude') +
+#   theme(plot.title = element_text(hjust = 0.5, size=20),
+#         axis.title.x = element_blank(),
+#         axis.title.y = element_blank(),
+#         axis.ticks = element_blank(),
+#         panel.grid = element_blank())
+
+KGE_map_meteoCatchAttr <- ggplot() +
   geom_map(
     data = wg, map = wg,
     aes(long, lat, map_id = region),
@@ -76,11 +110,11 @@ KGE_map_uncalibrated <- ggplot() +
   theme_map()+
   xlim(-180,180)+
   ylim(-55,75)+
-  geom_point(plotData_uncalibrated, mapping = aes(x = lon, y = lat,
-                                      fill=cut(mean_test_KGE_uncalibrated, breaks=breaks, labels=labels)),
+  geom_point(plotData_meteoCatchAttr, mapping = aes(x = lon, y = lat,
+                                                  fill=cut(mean_test_KGE_meteoCatchAttr, breaks=breaks, labels=labels)),
              color='black', pch=21, size = 2.5) +
   scale_fill_brewer(palette='RdYlBu', guide = guide_legend(reverse=TRUE), name='')+
-  labs(title='Uncalibrated PCR-GLOBWB\n') +
+  labs(title='Fully RF-based streamflow prediction (meteoCatchAttr)\n') +
   xlab('longitude')+
   ylab('latitude') +
   theme(plot.title = element_text(hjust = 0.5, size=20),
@@ -102,7 +136,7 @@ KGE_map_allpredictors <- ggplot() +
                                                   fill=cut(mean_test_KGE_allpredictors, breaks=breaks, labels=labels)),
              color='black', pch=21, size = 2.5) +
   scale_fill_brewer(palette='RdYlBu', guide = guide_legend(reverse=TRUE), name='') +
-labs(title="Post-processed - allPredictors\n") +
+labs(title="Hybrid streamflow prediction (allPredictors)\n") +
   xlab('longitude')+
   ylab('latitude') +
   theme(plot.title = element_text(hjust = 0.5, size=20),
@@ -112,7 +146,7 @@ labs(title="Post-processed - allPredictors\n") +
         panel.grid = element_blank())
 
 #patch it 
-combined <- ( KGE_map_uncalibrated / KGE_map_allpredictors ) + 
+combined <- ( KGE_map_meteoCatchAttr / KGE_map_allpredictors ) + 
   plot_layout(guides = "collect", width=c(2,2)) &
   guides(fill = guide_legend(override.aes = list(size = 7))) &
   theme(legend.position = 'bottom',
@@ -120,8 +154,8 @@ combined <- ( KGE_map_uncalibrated / KGE_map_allpredictors ) +
         legend.text = element_text(size=16))
 combined
 
-#save
-ggsave(paste0(outputDir,'map_kge.png'), combined, height=15, width=15, units='in', dpi=600)
+# save
+# ggsave(paste0(outputDir,'map_kge_benchmark.png'), combined, height=15, width=15, units='in', dpi=1200)
 
 
 
