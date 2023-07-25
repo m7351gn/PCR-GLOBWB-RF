@@ -52,7 +52,11 @@ for(subsample in 1:5){
 }
 
 allData <- do.call(rbind, subsample_KGE_list)
-allDataCum <- allData %>% mutate(subsample='Cumulative')
+allDataCum <- allData %>% 
+  group_by(grdc_no, setup) %>% 
+  summarise(KGE=mean(KGE), KGE_r=mean(KGE_r), 
+            KGE_alpha=mean(KGE_alpha), KGE_beta=mean(KGE_beta)) %>% 
+  mutate(subsample='Cumulative')
 allData <- rbind(allData,allDataCum)
 
 plotData <- allData %>% pivot_longer(KGE:KGE_beta, names_to = "KGE_component", 
@@ -79,13 +83,13 @@ KGE_boxplot <- ggplot(plotData , mapping = aes(setup, value, fill=setup))+
         legend.text = element_text(size=14),
         strip.text = element_text(size=12))+
   facetted_pos_scales(y = list(
-    KGE_component == "KGE" ~ scale_y_continuous(position='right', limits = c(-4, 1)),
-    KGE_component == "KGE_r" ~ scale_y_continuous(position='right', limits = c(0, 1)),
-    KGE_component == "KGE_alpha" ~ scale_y_continuous(position='right', limits = c(-0.5,5)),
-    KGE_component == "KGE_beta" ~ scale_y_continuous(position='right', limits = c(-0.5,5.5))))
+  KGE_component == "KGE" ~ scale_y_continuous(position='right', limits = c(-4, 1)),
+  KGE_component == "KGE_r" ~ scale_y_continuous(position='right', limits = c(0, 1)),
+  KGE_component == "KGE_alpha" ~ scale_y_continuous(position='right', limits = c(-0.5,5)),
+  KGE_component == "KGE_beta" ~ scale_y_continuous(position='right', limits = c(-0.5,5.5))))
 KGE_boxplot
 
-ggsave(paste0(outputDir,'KGE_boxplots.png'), KGE_boxplot, height=10, width=10, units='in', dpi=600)
+# ggsave(paste0(outputDir,'KGE_boxplots.png'), KGE_boxplot, height=10, width=10, units='in', dpi=1200)
 
 
 
@@ -94,6 +98,8 @@ uncalibratedCum <- allDataCum %>% filter(setup=='uncalibrated')
 qmeteostateCum <- allDataCum %>% filter(setup=='qMeteoStatevars')
 meteocatchCum <- allDataCum %>% filter(setup=='meteoCatchAttr')
 allpredictorsCum <- allDataCum %>% filter(setup=='allpredictors')
+
+# write.csv(allpredictorsCum, '../../../KGE_allpredictors_cumulative.csv', row.names=F)
 
 summary(uncalibratedCum$KGE)
 summary(qmeteostateCum$KGE)
@@ -114,3 +120,58 @@ summary(uncalibratedCum$KGE_beta)
 summary(qmeteostateCum$KGE_beta)
 summary(meteocatchCum$KGE_beta)
 summary(allpredictorsCum$KGE_beta)
+
+#count KGE > -0.41
+sum(uncalibratedCum$KGE > -0.41, na.rm = TRUE)
+sum(meteocatchCum$KGE > -0.41, na.rm = TRUE)
+sum(allpredictorsCum$KGE > -0.41, na.rm = TRUE)
+
+
+# all_cumulative <- rbind(uncalibratedCum, meteocatchCum, allpredictorsCum)
+
+title.size <- 18
+axis.text.size <- 14
+
+uncalibratedCum_distribution <- ggplot(uncalibratedCum, aes(x=KGE)) + 
+  geom_histogram(aes(y = after_stat(count / sum(count))), alpha=0.7, binwidth=0.05, color='black', fill='red') +
+  xlim(c(-0.41,1)) +
+  ggtitle('Uncalibrated PCR-GLOBWB (n=2327)') +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title = element_text(size=title.size),
+        axis.text.x = element_text(size=axis.text.size),
+        axis.text.y = element_text(size=axis.text.size),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
+meteocatchCum_distribution <- ggplot(meteocatchCum, aes(x=KGE)) + 
+  geom_histogram(aes(y = after_stat(count / sum(count))), alpha=0.7, binwidth=0.05, color='black', fill='red') +
+  xlim(c(-0.41,1)) +
+  ggtitle('meteoCatchAttr (n=3093)') +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title = element_text(size=title.size),
+        axis.text.x = element_text(size=axis.text.size),
+        axis.text.y = element_text(size=axis.text.size),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
+allpredictorsCUm_distribution <- ggplot(allpredictorsCum, aes(x=KGE)) + 
+  geom_histogram(aes(y = after_stat(count / sum(count))), alpha=0.7, binwidth=0.05, color='black', fill='red') +
+  xlim(c(-0.41,1)) +
+  ggtitle('allPredictors (n=3103)') +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title = element_text(size=title.size),        
+        axis.text.x = element_text(size=axis.text.size),
+        axis.text.y = element_text(size=axis.text.size),
+        axis.title.x = element_text(size=axis.text.size),
+        axis.title.y = element_blank())
+
+combined_three <- (uncalibratedCum_distribution / meteocatchCum_distribution /
+                     allpredictorsCUm_distribution )
+combined_three
+
+# ggsave(paste0(outputDir,'KGE_distributions.png'), combined_three, height=10, width=10, units='in', dpi=1200)
+
+# ggsave(paste0(outputDir,'KGE_distribution_uncalibrated.png'), uncalibratedCum_distribution, height=4, width=4, units='in', dpi=1200)
+# ggsave(paste0(outputDir,'KGE_distribution_fullML.png'), uncalibratedCum_distribution, height=5, width=10, units='in', dpi=300)
+# ggsave(paste0(outputDir,'KGE_distribution_hybrid.png'), uncalibratedCum_distribution, height=5, width=10, units='in', dpi=300)
+
