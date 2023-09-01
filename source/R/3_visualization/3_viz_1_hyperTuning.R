@@ -119,8 +119,7 @@ for(i in 1:3){
 #patch it together
 tuningPlot <- (mtryPlotList[[1]] + mtryPlotList[[2]] + mtryPlotList[[3]]) / 
   (ntreePlotList[[1]] + ntreePlotList[[2]] + ntreePlotList[[3]]) +
-  plot_layout(guides = "collect") &#+
-  #plot_annotation(tag_levels = 'A')&
+  plot_layout(guides = "collect") &
   guides(color = guide_legend(override.aes = list(linewidth = 2))) &
   theme(legend.position = 'bottom',
         legend.title = element_text(size=18),
