@@ -1,0 +1,10 @@
+# folders
+
+data/
+RF/
+viz/ 
+
+
+# History files
+*.Rhistory
+*.Rapp.history

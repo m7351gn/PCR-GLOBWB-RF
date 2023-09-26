@@ -29,10 +29,11 @@ for(subsample in 1:5){
     mutate(.,subsample=factor(subsample))
   
   rf.eval.meteoCatchAttr <- read.csv(paste0('../../../RF/3_validate/subsample_', subsample,
-                                          '/KGE_meteoCatchAttr.csv')) %>%
-    select(.,grdc_no, KGE) %>%
-    mutate(.,setup=factor('meteoCatchAttr')) %>% 
-    mutate(.,subsample=factor(subsample)) 
+                                          '/KGE_meteoCatchAttr.csv'))  %>%
+    select(.,grdc_no, KGE_corrected) %>% 
+    rename(., KGE=KGE_corrected) %>% 
+    mutate(.,setup=factor('meteoCatchAttr'))  %>% 
+    mutate(.,subsample=factor(subsample))
   
   #read allpredictors
   rf.eval.allpredictors <- read.csv(paste0('../../../RF/3_validate/subsample_', subsample,
@@ -164,8 +165,8 @@ combined_three <- (KGE_map_uncalibrated / KGE_map_meteoCatchAttr / KGE_map_allpr
 combined_three
 
 # save
-# ggsave(paste0(outputDir,'map_kge_benchmark.png'), combined, height=15, width=15, units='in', dpi=1200)
-ggsave(paste0(outputDir,'map_kge_three.png'), combined_three, height=20, width=15, units='in', dpi=300)
+ggsave(paste0(outputDir,'map_kge_benchmark.png'), combined, height=15, width=15, units='in', dpi=1200)
+# ggsave(paste0(outputDir,'map_kge_three.png'), combined_three, height=20, width=15, units='in', dpi=300)
 
 
 
